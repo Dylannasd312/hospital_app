@@ -1,31 +1,48 @@
 import 'package:flutter/material.dart';
+
 import '../modules/auth/views/login_screen.dart';
 import '../modules/home/views/home_screen.dart';
-
+import '../modules/pacientes/views/paciente_screen.dart';
+import '../modules/historia_clinica/views/historia_screen.dart';
+import '../modules/camas/views/camas_screen.dart';
 class AppRoutes {
+
   static Map<String, WidgetBuilder> routes = {
-    '/': (context) => LoginScreen(),
-    '/home': (context) => HomeScreen(),
 
-    // Rutas temporales (pantallas vacías)
+    // LOGIN
+    '/': (context) => const LoginScreen(),
+
+    // HOME
+    '/home': (context) => const HomeScreen(),
+
+    // PACIENTES
+    '/pacientes': (context) => const PacienteScreen(),
+
+    // INVENTARIO
     '/inventario': (context) => Scaffold(
-          appBar: AppBar(title: Text('Inventario')),
-          body: Center(child: Text('Módulo Inventario')),
+          appBar: AppBar(
+            title: const Text('Inventario'),
+          ),
+          body: const Center(
+            child: Text('Módulo Inventario'),
+          ),
         ),
 
+    // TURNOS
     '/turnos': (context) => Scaffold(
-          appBar: AppBar(title: Text('Turnos')),
-          body: Center(child: Text('Módulo Turnos')),
+          appBar: AppBar(
+            title: const Text('Turnos'),
+          ),
+          body: const Center(
+            child: Text('Módulo Turnos'),
+          ),
         ),
 
-    '/camas': (context) => Scaffold(
-          appBar: AppBar(title: Text('Camas')),
-          body: Center(child: Text('Módulo Camas')),
-        ),
+    // CAMAS
+    '/camas': (context) => const CamasScreen(),
+          
 
-    '/historia': (context) => Scaffold(
-          appBar: AppBar(title: Text('Historia Clínica')),
-          body: Center(child: Text('Módulo Historia Clínica')),
-        ),
+    // HISTORIA CLINICA
+    '/historia': (context) => const HistoriaScreen(),
   };
 }
