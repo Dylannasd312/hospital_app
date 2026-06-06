@@ -114,40 +114,150 @@ class _HospitalizarScreenState
 
             const SizedBox(height: 20),
 
-            DropdownButtonFormField<Paciente>(
+            Autocomplete<Paciente>(
 
-              value:
-                  pacienteSeleccionado,
+  displayStringForOption:
+      (Paciente p) =>
+          '${p.nombre} ${p.apellido}',
 
-              decoration:
-                  const InputDecoration(
-                labelText: 'Paciente',
-                border:
-                    OutlineInputBorder(),
-              ),
+  optionsBuilder:
 
-              items:
-                  pacientes.map((p) {
+      (TextEditingValue textValue) {
 
-                return DropdownMenuItem(
+    if (textValue.text.isEmpty) {
 
-                  value: p,
+      return pacientes;
+    }
 
-                  child: Text(
-                    '${p.nombre} ${p.apellido}',
-                  ),
-                );
-              }).toList(),
+    return pacientes.where((p) {
 
-              onChanged: (value) {
+      final nombreCompleto =
 
-                setState(() {
+          '${p.nombre} ${p.apellido}'
+              .toLowerCase();
 
-                  pacienteSeleccionado =
-                      value;
-                });
-              },
-            ),
+      return nombreCompleto.contains(
+        textValue.text.toLowerCase(),
+      );
+    });
+  },
+
+  onSelected: (Paciente paciente) {
+
+    setState(() {
+
+      pacienteSeleccionado =
+          paciente;
+    });
+  },
+
+  fieldViewBuilder: (
+
+    context,
+
+    controller,
+
+    focusNode,
+
+    onFieldSubmitted,
+
+  ) {
+
+    return TextField(
+
+      controller: controller,
+
+      focusNode: focusNode,
+
+      decoration: const InputDecoration(
+
+        labelText:
+            'Buscar Paciente',
+
+        prefixIcon:
+            Icon(Icons.search),
+
+        border:
+            OutlineInputBorder(),
+      ),
+    );
+  },
+
+  optionsViewBuilder: (
+
+    context,
+
+    onSelected,
+
+    options,
+
+  ) {
+
+    return Align(
+
+      alignment:
+          Alignment.topLeft,
+
+      child: Material(
+
+        elevation: 4,
+
+        borderRadius:
+            BorderRadius.circular(
+          12,
+        ),
+
+        child: SizedBox(
+
+          width: 350,
+
+          height: 250,
+
+          child: ListView.builder(
+
+            padding:
+                EdgeInsets.zero,
+
+            itemCount:
+                options.length,
+
+            itemBuilder:
+                (context, index) {
+
+              final paciente =
+                  options.elementAt(
+                index,
+              );
+
+              return ListTile(
+
+                leading:
+                    const Icon(
+                  Icons.person,
+                ),
+
+                title: Text(
+                  '${paciente.nombre} ${paciente.apellido}',
+                ),
+
+                subtitle: Text(
+                  'CI: ${paciente.ci}',
+                ),
+
+                onTap: () {
+
+                  onSelected(
+                    paciente,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  },
+),
 
             const SizedBox(height: 20),
 

@@ -1,4 +1,5 @@
 import '../models/hospitalizacion.dart';
+
 import '../services/hospitalizacion_service.dart';
 
 class HospitalizacionController {
@@ -12,6 +13,16 @@ class HospitalizacionController {
 
     await _service.hospitalizarPaciente(
       hospitalizacion,
+    );
+  }
+
+  Future<void> finalizarHospitalizacion(
+    int camaId,
+  ) async {
+
+    await _service
+        .finalizarHospitalizacion(
+      camaId,
     );
   }
 }

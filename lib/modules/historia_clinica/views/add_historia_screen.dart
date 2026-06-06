@@ -141,42 +141,158 @@ class _AddHistoriaScreenState
           child: Column(
             children: [
 
-              DropdownButtonFormField<int>(
+              Autocomplete<Paciente>(
 
-                value: pacienteSeleccionado,
+  displayStringForOption:
+      (Paciente p) =>
+          '${p.nombre} ${p.apellido}',
 
-                decoration: InputDecoration(
+  optionsBuilder:
 
-                  labelText: 'Paciente',
+      (TextEditingValue textValue) {
 
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(
-                      12,
-                    ),
-                  ),
+    if (textValue.text.isEmpty) {
+
+      return pacientes;
+    }
+
+    return pacientes.where((p) {
+
+      final nombreCompleto =
+
+          '${p.nombre} ${p.apellido}'
+              .toLowerCase();
+
+      return nombreCompleto.contains(
+        textValue.text.toLowerCase(),
+      );
+    });
+  },
+
+  onSelected: (Paciente paciente) {
+
+    setState(() {
+
+      pacienteSeleccionado =
+          paciente.id;
+    });
+  },
+
+  fieldViewBuilder: (
+
+    context,
+
+    controller,
+
+    focusNode,
+
+    onFieldSubmitted,
+
+  ) {
+
+    return TextField(
+
+      controller: controller,
+
+      focusNode: focusNode,
+
+      decoration: InputDecoration(
+
+        labelText:
+            'Buscar Paciente',
+
+        prefixIcon:
+            const Icon(
+          Icons.search,
+        ),
+
+        border:
+            OutlineInputBorder(
+
+          borderRadius:
+              BorderRadius.circular(
+            12,
+          ),
+        ),
+      ),
+    );
+  },
+
+  optionsViewBuilder: (
+
+    context,
+
+    onSelected,
+
+    options,
+
+  ) {
+
+    return Align(
+
+      alignment:
+          Alignment.topLeft,
+
+      child: Material(
+
+        elevation: 4,
+
+        borderRadius:
+            BorderRadius.circular(
+          12,
+        ),
+
+        child: SizedBox(
+
+          width: 350,
+
+          height: 250,
+
+          child: ListView.builder(
+
+            padding:
+                EdgeInsets.zero,
+
+            itemCount:
+                options.length,
+
+            itemBuilder:
+                (context, index) {
+
+              final paciente =
+                  options.elementAt(
+                index,
+              );
+
+              return ListTile(
+
+                leading:
+                    const Icon(
+                  Icons.person,
                 ),
 
-                items: pacientes.map((p) {
+                title: Text(
+                  '${paciente.nombre} ${paciente.apellido}',
+                ),
 
-                  return DropdownMenuItem<int>(
+                subtitle: Text(
+                  'CI: ${paciente.ci}',
+                ),
 
-                    value: p.id,
+                onTap: () {
 
-                    child: Text(
-                      '${p.nombre} ${p.apellido}',
-                    ),
+                  onSelected(
+                    paciente,
                   );
-                }).toList(),
-
-                onChanged: (value) {
-
-                  setState(() {
-                    pacienteSeleccionado =
-                        value;
-                  });
                 },
-              ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  },
+),
 
               const SizedBox(height: 15),
 

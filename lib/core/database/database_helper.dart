@@ -36,7 +36,7 @@ class DatabaseHelper {
 
       path,
 
-      version: 3,
+      version: 5,
 
       onCreate: _createDB,
 
@@ -122,7 +122,9 @@ class DatabaseHelper {
 
         especialidad TEXT,
 
-        telefono TEXT
+        telefono TEXT,
+
+        grupo TEXT
       )
     ''');
 
@@ -130,28 +132,48 @@ class DatabaseHelper {
     // TURNOS
     // =========================
 
-    await db.execute('''
-      CREATE TABLE turnos (
+  await db.execute('''
+  CREATE TABLE turnos (
 
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        paciente_id INTEGER,
+    paciente_id INTEGER,
 
-        medico_id INTEGER,
+    medico_id INTEGER,
 
-        fecha TEXT,
+    fecha TEXT,
 
-        hora TEXT,
+    hora TEXT,
 
-        estado TEXT,
+    estado TEXT,
 
-        FOREIGN KEY (paciente_id)
-        REFERENCES pacientes(id),
+    FOREIGN KEY (paciente_id)
+    REFERENCES pacientes(id),
 
-        FOREIGN KEY (medico_id)
-        REFERENCES medicos(id)
-      )
-    ''');
+    FOREIGN KEY (medico_id)
+    REFERENCES medicos(id)
+  )
+''');
+await db.execute('''
+  CREATE TABLE turnos_hospitalarios (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    medico_id INTEGER,
+
+    medico_nombre TEXT,
+
+    fecha TEXT,
+
+    hora_inicio TEXT,
+
+    hora_fin TEXT,
+
+    area TEXT,
+
+    grupo TEXT
+  )
+''');
 
     // =========================
     // CAMAS
@@ -288,17 +310,66 @@ class DatabaseHelper {
   // ACTUALIZACIONES
   // =========================
 
-  Future _onUpgrade(
-    Database db,
-    int oldVersion,
-    int newVersion,
-  ) async {
+Future _onUpgrade(
+  Database db,
+  int oldVersion,
+  int newVersion,
+) async {
 
-    if (oldVersion < 3) {
+  if (oldVersion < 3) {
 
-      await insertarCamasIniciales(db);
+    await insertarCamasIniciales(db);
+  }
+
+  if (oldVersion < 4) {
+
+    try {
+
+      await db.execute('''
+        ALTER TABLE medicos
+        ADD COLUMN grupo TEXT
+      ''');
+
+    } catch (e) {
+
+      print(e);
+    }
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS turnos_hospitalarios (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        medico_id INTEGER,
+
+        medico_nombre TEXT,
+
+        fecha TEXT,
+
+        hora_inicio TEXT,
+
+        hora_fin TEXT,
+
+        area TEXT
+      )
+    ''');
+  }
+
+  if (oldVersion < 5) {
+
+    try {
+
+      await db.execute('''
+        ALTER TABLE turnos_hospitalarios
+        ADD COLUMN grupo TEXT
+      ''');
+
+    } catch (e) {
+
+      print(e);
     }
   }
+}
 
   // =========================
   // INSERTAR CAMAS AUTOMATICAS

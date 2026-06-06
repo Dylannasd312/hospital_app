@@ -5,6 +5,7 @@ import '../models/cama.dart';
 class CamaService {
 
   Future<List<Cama>> obtenerCamas() async {
+    
 
     final db =
         await DatabaseHelper.instance.database;

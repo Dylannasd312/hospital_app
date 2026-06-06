@@ -16,4 +16,37 @@ class HospitalizacionService {
       hospitalizacion.toMap(),
     );
   }
+
+  // =========================
+  // FINALIZAR HOSPITALIZACION
+  // =========================
+
+  Future<void> finalizarHospitalizacion(
+    int camaId,
+  ) async {
+
+    final db =
+        await DatabaseHelper.instance.database;
+
+    await db.update(
+
+      'hospitalizacion',
+
+      {
+
+        'estado': 'Finalizada',
+
+        'fecha_salida':
+            DateTime.now().toString(),
+      },
+
+      where:
+          'cama_id = ? AND estado = ?',
+
+      whereArgs: [
+        camaId,
+        'Activa',
+      ],
+    );
+  }
 }

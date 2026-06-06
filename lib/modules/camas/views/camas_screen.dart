@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/cama_controller.dart';
+
 import '../models/cama.dart';
 
 import '../widgets/cama_card.dart';
 
 import 'hospitalizar_screen.dart';
+import 'detalle_cama_screen.dart';
 
 class CamasScreen extends StatefulWidget {
 
@@ -24,6 +26,10 @@ class _CamasScreenState
 
   List<Cama> camas = [];
 
+  List<Cama> camasFiltradas = [];
+
+  String filtroActual = 'Todas';
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +42,29 @@ class _CamasScreenState
     camas =
         await controller.listarCamas();
 
+    aplicarFiltro(filtroActual);
+  }
+
+  void aplicarFiltro(
+    String tipo,
+  ) {
+
+    filtroActual = tipo;
+
+    if (tipo == 'Todas') {
+
+      camasFiltradas = camas;
+
+    } else {
+
+      camasFiltradas =
+          camas.where((c) {
+
+        return c.tipo == tipo;
+
+      }).toList();
+    }
+
     setState(() {});
   }
 
@@ -45,62 +74,134 @@ class _CamasScreenState
     return Scaffold(
 
       appBar: AppBar(
-
         title:
             const Text('Gestión de Camas'),
       ),
 
-      body: Padding(
+      body: Column(
 
-        padding:
-            const EdgeInsets.all(12),
+        children: [
 
-        child: GridView.builder(
+          Padding(
 
-          itemCount: camas.length,
+            padding:
+                const EdgeInsets.all(12),
 
-          gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
+            child: DropdownButtonFormField<String>(
 
-            crossAxisCount: 2,
+              value: filtroActual,
 
-            crossAxisSpacing: 10,
+              decoration:
+                  const InputDecoration(
 
-            mainAxisSpacing: 10,
+                labelText:
+                    'Filtrar Tipo',
+
+                border:
+                    OutlineInputBorder(),
+              ),
+
+              items: [
+
+                'Todas',
+
+                'Observación',
+
+                'Intermedia',
+
+                'Intensiva',
+
+              ].map((tipo) {
+
+                return DropdownMenuItem(
+
+                  value: tipo,
+
+                  child: Text(tipo),
+                );
+              }).toList(),
+
+              onChanged: (value) {
+
+                aplicarFiltro(value!);
+              },
+            ),
           ),
 
-          itemBuilder: (context, index) {
+          Expanded(
 
-            final cama = camas[index];
+            child: Padding(
 
-            return CamaCard(
+              padding:
+                  const EdgeInsets.all(12),
 
-              cama: cama,
+              child: GridView.builder(
 
-              onTap: () async {
+                itemCount:
+                    camasFiltradas.length,
 
-                if (cama.estado ==
-                    'Disponible') {
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
 
-                  await Navigator.push(
+                  crossAxisCount: 2,
 
-                    context,
+                  crossAxisSpacing: 10,
 
-                    MaterialPageRoute(
+                  mainAxisSpacing: 10,
+                ),
 
-                      builder: (_) =>
-                          HospitalizarScreen(
-                        cama: cama,
-                      ),
-                    ),
+                itemBuilder:
+                    (context, index) {
+
+                  final cama =
+                      camasFiltradas[index];
+
+                  return CamaCard(
+
+                    cama: cama,
+
+                    onTap: () async {
+
+                      if (cama.estado ==
+                          'Disponible') {
+
+                        await Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+                                HospitalizarScreen(
+                              cama: cama,
+                            ),
+                          ),
+                        );
+
+                      } else {
+
+                        await Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+                                DetalleCamaScreen(
+                              cama: cama,
+                            ),
+                          ),
+                        );
+                      }
+
+                      cargarCamas();
+                    },
                   );
-
-                  cargarCamas();
-                }
-              },
-            );
-          },
-        ),
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

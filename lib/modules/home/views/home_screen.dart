@@ -37,12 +37,12 @@ class HomeScreen extends StatelessWidget {
               color: Colors.white,
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -109,6 +109,14 @@ class HomeScreen extends StatelessWidget {
 
                   buildCard(
                     context,
+                    'Médicos',
+                    Icons.medical_services,
+                    Colors.teal,
+                    '/medicos',
+                  ),
+
+                  buildCard(
+                    context,
                     'Inventario',
                     Icons.inventory,
                     Colors.orange,
@@ -138,7 +146,13 @@ class HomeScreen extends StatelessWidget {
                     Colors.red,
                     '/historia',
                   ),
-
+                  buildCard(
+                    context,
+                    'Configuracion',
+                    Icons.settings,
+                    Colors.tealAccent,
+                    '/configuracion',
+                  ),
                   buildCard(
                     context,
                     'Cerrar Sesión',
@@ -146,6 +160,7 @@ class HomeScreen extends StatelessWidget {
                     Colors.black87,
                     '/',
                   ),
+                  
                 ],
               ),
             ),
